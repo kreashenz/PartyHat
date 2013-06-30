@@ -12,6 +12,7 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitTask;
 
 public class PartyHat extends JavaPlugin {
 
@@ -25,6 +26,7 @@ public class PartyHat extends JavaPlugin {
 		final Player player = (Player)sender;
 		final PlayerInventory pi = player.getInventory();
 		final World w = player.getWorld();
+		BukkitTask task = null;
 		String success = "§aEnjoy your new hat!";
 		String noperm = "§cYou do not have permission to use this..";
 		String p = "§cYou must be a player to use this..";
@@ -53,7 +55,7 @@ public class PartyHat extends JavaPlugin {
 
 		if (cmd.getName().equalsIgnoreCase("builder")){
 			if(sender instanceof Player) {
-				getServer().getScheduler().cancelTasks(this);
+				getServer().getScheduler().cancelTask(task.getTaskId());
 				if (sender.hasPermission("partyhat.builder")) {
 					pi.setArmorContents(null);
 					ItemStack helmet = new ItemStack(Material.GOLD_HELMET);
@@ -72,9 +74,8 @@ public class PartyHat extends JavaPlugin {
 				if (sender.hasPermission("partyhat.lamp")) {
 					sender.sendMessage(success);
 					pi.setArmorContents(null);
-					getServer().getScheduler().runTaskTimer(this, new Runnable() {
+					task = getServer().getScheduler().runTaskTimer(this, new Runnable() {
 						boolean state = false;
-
 						public void run() {
 							ItemStack helm;
 							if (this.state) {
